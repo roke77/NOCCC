@@ -1,0 +1,10 @@
+bin/
+obj/
+.vs/
+*.user
+
+# Local machine-specific game path override (see NOCCC.csproj)
+GameDir.props
+
+# Release zips (built + uploaded manually, never tracked)
+NOCCC_*.zip

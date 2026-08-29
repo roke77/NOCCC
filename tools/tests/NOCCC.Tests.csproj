@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Standalone test project — NOT a ProjectReference to NOCCC.csproj, which would drag in the
+       $(GameDir)-relative Assembly-CSharp/UnityEngine.Modules references and require a real Nuclear
+       Option install just to build tests. Instead compiles the one pure .cs file directly. Excluded
+       from the main plugin build already, via NOCCC.csproj's blanket `<Compile Remove="tools\**\*.cs" />`. -->
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector" Version="6.0.4" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+    <PackageReference Include="xunit" Version="2.9.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- CinematicViewPolicy.cs is 100% BCL — no Unity/BepInEx types. -->
+    <Compile Include="..\..\src\CinematicViewPolicy.cs" Link="Source\CinematicViewPolicy.cs" />
+  </ItemGroup>
+
+</Project>
