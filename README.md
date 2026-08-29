@@ -25,6 +25,22 @@ one of two ways:
 Press the bound key while flying, in cockpit view, to toggle the unobstructed view on and off. It
 stays on across camera switches and respawns until you press it again.
 
+## Troubleshooting
+
+**NOCCC doesn't appear in the F1 menu at all.** Check the game's log
+(`BepInEx\LogOutput.log`) for `[Info : NOCCC] NOCCC loaded.` — if that line is there, NOCCC itself
+loaded fine and the problem is on Configuration Manager's side, not NOCCC's: its own
+`BepInEx\config\com.bepis.bepinex.configurationmanager.cfg` has a `[Filtering]` section with a
+**"Show keybinds"** setting. NOCCC's only config entry is a keybind, so if that setting is `false`,
+Configuration Manager has nothing left to show for NOCCC and hides its whole section — it isn't
+specific to this mod; any plugin whose settings are all keybinds disappears the same way. Fix it
+either way:
+
+- In-game: open the F1 window and check the **"Show keybinds"** checkbox near the search box, or
+- Directly: set `Show keybinds = true` under `[Filtering]` in that cfg file (its own documented
+  default), then reopen F1. If the game is running when you edit it, the change may get overwritten
+  on exit — the in-game checkbox is the more reliable fix while playing.
+
 ## Known limitations
 
 The cockpit-interior allowlist is confirmed only on the **Trainer** and the **Chicane** attack
