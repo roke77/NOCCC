@@ -5,6 +5,9 @@ that hides the flight HUD and the cockpit interior (dashboard, canopy frame, con
 turret, rotor blades) while staying in the game's normal first-person cockpit camera — not the
 game's own free/spectator camera. For recording clean cockpit footage while actually flying.
 
+See [HOW_IT_WORKS.md](HOW_IT_WORKS.md) for the technical details of both hiding techniques and what
+game internals they touch.
+
 ## Install
 
 1. Install [BepInEx 5](https://github.com/BepInEx/BepInEx) for Nuclear Option, if you haven't already.
@@ -13,28 +16,40 @@ game's own free/spectator camera. For recording clean cockpit footage while actu
 
 ## Usage
 
-The toggle keybind ships **unbound** so it can't collide with anything else on your setup. Bind it
-one of two ways:
+Two independent keybinds, both ship **unbound** so neither collides with anything else on your
+setup. Bind either (or both) one of two ways:
 
 - **F1 in-game menu** — if you have [BepInEx.ConfigurationManager](https://github.com/BepInEx/BepInEx.ConfigurationManager)
   installed (bundled with most Nuclear Option modpacks), press F1 in-game, find **NOCCC**, and click
-  the keybind field next to *Toggle Cinematic Cockpit Camera*, then press the key you want.
+  the keybind field next to the one you want, then press the key you want.
 - **Edit the config file directly** — open `BepInEx\config\com.roque.NOCCC.cfg` in a text editor
-  and set `ToggleCinematicCockpitCamera` under `[Keybinds]` (e.g. `F9`), then restart the game.
+  and set the key under `[Keybinds]` (e.g. `F9`), then restart the game.
 
-Press the bound key while flying, in cockpit view, to toggle the unobstructed view on and off. It
-stays on across camera switches and respawns until you press it again.
+The two keybinds clear the same obstructions (hull, turret, rotor, ejection-capsule geometry) by
+different means, and can be toggled independently of each other:
+
+- **Toggle Cinematic Cockpit Camera** — pushes the camera forward past the obstruction. How far it
+  pushes is set by **ForwardOffset**, also in the F1 menu under NOCCC's Settings (a 0–10 meter
+  dropdown, default 3). No per-aircraft setup, but the right distance varies by airframe — too short
+  and the nose or a chin-mounted turret still pokes into frame; too far and the camera pops out past
+  the airframe entirely or clips into whatever's further forward.
+- **Toggle Hide Cockpit** — hides each obstruction's own renderer instead of moving the camera. More
+  reliable on aircraft the camera push doesn't clear cleanly, but only covers what's already been
+  found and named for that airframe (see Known limitations).
+
+Press either bound key while flying, in cockpit view, to toggle its effect on and off. Both persist
+across camera switches and respawns until pressed again, independently of each other.
 
 ## Troubleshooting
 
 **NOCCC doesn't appear in the F1 menu at all.** Check the game's log
 (`BepInEx\LogOutput.log`) for `[Info : NOCCC] NOCCC loaded.` — if that line is there, NOCCC itself
-loaded fine and the problem is on Configuration Manager's side, not NOCCC's: its own
-`BepInEx\config\com.bepis.bepinex.configurationmanager.cfg` has a `[Filtering]` section with a
-**"Show keybinds"** setting. NOCCC's only config entry is a keybind, so if that setting is `false`,
-Configuration Manager has nothing left to show for NOCCC and hides its whole section — it isn't
-specific to this mod; any plugin whose settings are all keybinds disappears the same way. Fix it
-either way:
+loaded fine and the problem is on Configuration Manager's side, not NOCCC's.
+
+**One or both keybind fields are missing, but the rest of NOCCC's section (ForwardOffset) shows up
+fine.** Configuration Manager's own `BepInEx\config\com.bepis.bepinex.configurationmanager.cfg` has a
+`[Filtering]` section with a **"Show keybinds"** setting — when `false`, it hides every keybind field
+for every plugin, not just NOCCC's. Fix it either way:
 
 - In-game: open the F1 window and check the **"Show keybinds"** checkbox near the search box, or
 - Directly: set `Show keybinds = true` under `[Filtering]` in that cfg file (its own documented
@@ -43,9 +58,16 @@ either way:
 
 ## Known limitations
 
-The cockpit-interior allowlist is confirmed only on the **Trainer** and the **Chicane** attack
-helicopter. Other aircraft may still show some interior geometry the first time they're flown with
-this on — if you find one, please open an issue with the aircraft name and a screenshot.
+**Toggle Cinematic Cockpit Camera** (camera push): a single ForwardOffset has to clear every
+obstruction on the airframe at once — the nose, and on a helicopter a chin-mounted turret sitting
+well forward of it too. There's no guarantee one distance clears both without also clipping into
+whichever one it passes closest to; if it doesn't work well on a given aircraft, try **Toggle Hide
+Cockpit** instead.
+
+**Toggle Hide Cockpit** (renderer hide): its allowlist of hull/turret/rotor pieces is confirmed only
+on the **Trainer** and the **Chicane** attack helicopter. Other aircraft may still show some interior
+geometry the first time they're flown with this on — if you find one, please open an issue with the
+aircraft name and a screenshot.
 
 ## Building from source
 
